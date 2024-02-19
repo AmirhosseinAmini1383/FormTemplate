@@ -1,10 +1,26 @@
 import { Form, Formik } from "formik";
 import React from "react";
-import { initialValues } from "./useFormik/initialValues";
-import { onSubmit } from "./useFormik/onSubmit";
-import validationSchema from "./useFormik/validationSchema";
+import * as Yup from "yup";
 import Control from "./formikElements/Control";
 const Login = () => {
+  const initialValues = {
+    email: "",
+    password: "",
+  };
+  const onSubmit = (values) => {
+    console.log(values);
+  };
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .required("لطفا ایمیل خود را وارد کنید")
+      .email("لطفا قالب ایمیل را رعایت کنید مثال : amir@gmail.com"),
+    password: Yup.string()
+      .required("لطفا گذرواژه خود را وارد کنید")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "حد اقل یک حرف بزرگ و یک حرف کوچک لاتین و اعداد و کارکترهای خاص استفاده کنید"
+      ),
+  });
   return (
     <div className="limiter">
       <div className="container-login100">
