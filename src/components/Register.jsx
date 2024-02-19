@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
+import { Link } from "react-router-dom";
 const Register = () => {
   const initialValues = {
     username: "",
@@ -12,6 +13,7 @@ const Register = () => {
     password: "",
     confirmpassword: "",
     authMode: "mobile",
+    rule: [],
   };
   const onSubmit = (values) => {
     console.log(values);
@@ -52,11 +54,14 @@ const Register = () => {
         /^[ابپتثجچهخدذرزسشصظطضعغفقک@-_.:گلمنوهیژئي\s0-9a-zA-Z]+$/,
         "فقط از حروف فارسی و لاتین و اعداد و @ : - _ . استفاده کنید"
       ),
+    rule: Yup.string().required("لطفا قوانین رو مطالعه کنید"),
   });
   const authModeValues = [
     { id: "mobile", value: "موبایل" },
     { id: "email", value: "ایمیل" },
   ];
+  const ruleValues = [{ id: 1, value: "قوانین سایت را مطالعه کردم." }];
+
   return (
     <div className="limiter">
       <div className="container-login100">
@@ -138,13 +143,14 @@ const Register = () => {
                     icon="fa fa-lock"
                     label="تایید رمز عبور"
                   />
+                  <Control control="checkbox" name="rule" option={ruleValues} />
                   <div className="container-login100-form-btn">
                     <button className="login100-form-btn">ثبت نام</button>
                   </div>
                   <div className="text-center p-t-12 p-b-45">
-                    <a className="txt2" href="#">
+                    <Link className="txt2" to="/">
                       قبلا ثبت نام کرده ام
-                    </a>
+                    </Link>
                   </div>
                 </Form>
                 <div className="login100-pic js-tilt" data-tilt>

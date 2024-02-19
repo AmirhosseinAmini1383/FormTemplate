@@ -2,6 +2,7 @@ import { Form, Formik } from "formik";
 import React from "react";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
+import { Link } from "react-router-dom";
 const Login = () => {
   const initialValues = {
     email: "",
@@ -60,13 +61,13 @@ const Login = () => {
                     </a>
                   </div>
                   <div className="text-center pos-absolute m-auto w-100 bottom-0">
-                    <a className="txt2" href="#">
+                    <Link className="txt2" to="/register">
                       ثبت نام
                       <i
                         className="fa fa-long-arrow-left m-l-5"
                         aria-hidden="true"
                       ></i>
-                    </a>
+                    </Link>
                   </div>
                 </Form>
                 <div className="login100-pic js-tilt" data-tilt>

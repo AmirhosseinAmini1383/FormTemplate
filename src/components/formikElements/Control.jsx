@@ -1,6 +1,7 @@
 import React from "react";
 import Input from "./Input";
 import Radio from "./Radio";
+import Checkbox from "./Checkbox";
 
 const Control = (props) => {
   switch (props.control) {
@@ -8,6 +9,8 @@ const Control = (props) => {
       return <Input {...props} />;
     case "Radio":
       return <Radio {...props} />;
+    case "checkbox":
+      return <Checkbox {...props} />;
     default:
       return null;
   }

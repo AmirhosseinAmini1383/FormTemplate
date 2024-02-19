@@ -16,6 +16,8 @@ const Radio = (props) => {
             <Fragment key={o.id}>
               <input
                 className="form-check-input mx-2"
+                form-check-input
+                mx-2
                 type="radio"
                 id={o.id}
                 {...field}
