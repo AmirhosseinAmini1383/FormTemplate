@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
 const Register = () => {
+  // const [startDate, setStartDate] = useState(new Date());
   const initialValues = {
     username: "",
     firstname: "",
@@ -14,6 +17,7 @@ const Register = () => {
     confirmpassword: "",
     authMode: "mobile",
     rule: [],
+    date: "",
   };
   const onSubmit = (values) => {
     console.log(values);
@@ -45,7 +49,7 @@ const Register = () => {
     firstname: Yup.string()
       .required("لطفا نام خود را وارد کنید")
       .matches(
-        /^[ابپتثجچهخدذرزسشصظطضعغفقک@-_.:گلمنوهیژئي\s0-9a-zA-Z]+$/,
+        /^[ابپتثحجچهخدذرزسشصظطضعغفقک@-_.:گلمنوهیژئي\s0-9a-zA-Z]+$/,
         "فقط از حروف فارسی و لاتین و اعداد و @ : - _ . استفاده کنید"
       ),
     lastname: Yup.string()
@@ -54,7 +58,10 @@ const Register = () => {
         /^[ابپتثجچهخدذرزسشصظطضعغفقک@-_.:گلمنوهیژئي\s0-9a-zA-Z]+$/,
         "فقط از حروف فارسی و لاتین و اعداد و @ : - _ . استفاده کنید"
       ),
-    rule: Yup.string().required("لطفا قوانین رو مطالعه کنید"),
+    rule: Yup.array().of(
+      Yup.string().required("لطفا قوانین سایت را مطالعه کنید")
+    ),
+    date: Yup.string().required("لطفا تاریخ تولد خود را وارد کنید"),
   });
   const authModeValues = [
     { id: "mobile", value: "موبایل" },
@@ -142,6 +149,17 @@ const Register = () => {
                     name="confirmpassword"
                     icon="fa fa-lock"
                     label="تایید رمز عبور"
+                  />
+                  {/* <DatePicker
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                  /> */}
+                  <Control
+                    formik={formik}
+                    control="date"
+                    name="date"
+                    icon="fa fa-calendar"
+                    label="تاریخ تولد"
                   />
                   <Control control="checkbox" name="rule" option={ruleValues} />
                   <div className="container-login100-form-btn">
