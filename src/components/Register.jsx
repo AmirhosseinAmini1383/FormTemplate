@@ -3,6 +3,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
+import axios from "axios";
 // import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
 const Register = () => {
@@ -18,9 +19,18 @@ const Register = () => {
     authMode: "mobile",
     rule: [],
     date: "",
+    image: null,
   };
   const onSubmit = (values) => {
     console.log(values);
+    // let formData = new FormData();
+    // formData.append("username", values.username);
+    // formData.append("mobile", values.mobile);
+    // formData.append("password", values.password);
+    // formData.append("image", values.image);
+    // axios.post("url", formData, {
+    //   headers: { "Content-Type": "multipart/form-data" },
+    // });
     alert("Submit Form :)");
   };
   const validationSchema = Yup.object({
@@ -62,6 +72,18 @@ const Register = () => {
       Yup.string().required("لطفا قوانین سایت را مطالعه کنید")
     ),
     date: Yup.string().required("لطفا تاریخ تولد خود را وارد کنید"),
+    image: Yup.mixed()
+      .required("لطفا فایل مدنظر خود را آپلود کنید")
+      .test(
+        "filesize",
+        "حجم فایل نمیتواند بیشتر 500 کیلوبایت باشد",
+        (value) => value && value.size <= 500 * 1024
+      )
+      .test(
+        "format",
+        "فرمت فایل باید png باشد",
+        (value) => value && value.type === "image/png"
+      ),
   });
   const authModeValues = [
     { id: "mobile", value: "موبایل" },
@@ -160,6 +182,13 @@ const Register = () => {
                     name="date"
                     icon="fa fa-calendar"
                     label="تاریخ تولد"
+                  />
+                  <Control
+                    formik={formik}
+                    control="file"
+                    name="image"
+                    icon="fa fa-file"
+                    label="تصویر کاربر"
                   />
                   <Control control="checkbox" name="rule" option={ruleValues} />
                   <div className="container-login100-form-btn">
