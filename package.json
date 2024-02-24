@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.7",
     "formik": "^2.4.5",
+    "jalaali-react-date-picker": "^1.0.17",
     "jalali-react-datepicker": "^1.2.3",
     "moment-jalaali": "^0.10.0",
     "react": "^18.2.0",

@@ -3,11 +3,8 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
-import axios from "axios";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+// import axios from "axios";
 const Register = () => {
-  // const [startDate, setStartDate] = useState(new Date());
   const initialValues = {
     username: "",
     firstname: "",
@@ -129,7 +126,6 @@ const Register = () => {
                     icon="fa fa-user"
                     label="نام کاربری"
                   />
-
                   <Control
                     formik={formik}
                     control="Radio"
@@ -172,10 +168,6 @@ const Register = () => {
                     icon="fa fa-lock"
                     label="تایید رمز عبور"
                   />
-                  {/* <DatePicker
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                  /> */}
                   <Control
                     formik={formik}
                     control="date"
