@@ -5,53 +5,59 @@ import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import swal from "sweetalert";
+import { Service } from "../Api/Axios/Service";
 const Login = () => {
   const initialValues = {
     phone: "",
     password: "",
   };
-  const onSubmit = (values) => {
+  const onSubmit = (values, submitProps) => {
+    setTimeout(() => {
+      submitProps.setSubmitting(false);
+      submitProps.resetForm();
+    }, 5000);
     console.log(values);
-    axios
-      .post("http://authservice.azhadev.ir/api/auth/login", values)
-      .then((res) => {
-        console.log(res);
-        localStorage.getItem("token");
-        if (
-          res.status === 202 ||
-          res.status === 200 ||
-          res.statusText === "OK"
-        ) {
-          swal("ورود با موفقیت انجام شد", {
-            buttons: "متوجه شدم",
-            icon: "success",
-          });
-        }
-      });
+    Service.post("/login", values).then((res) => {
+      console.log(res);
+      localStorage.getItem("token");
+      if (res.status === 200 || res.statusText === "OK") {
+        swal("ورود با موفقیت انجام شد", {
+          buttons: "متوجه شدم",
+          icon: "success",
+        });
+      }
+      if (
+        res.status === 203 ||
+        res.statusText === "Non-Authoritative Information"
+      ) {
+        swal("مشخصات وارد شده صحیح نمی باشند", {
+          buttons: "متوجه شدم",
+          icon: "error",
+        });
+      }
+    });
   };
   const validationSchema = Yup.object({
-    phone: Yup.number().required("لطفا شماره موبایل خود را کنید"),
+    phone: Yup.number().required("لطفا شماره موبایل خود را وارد کنید"),
     password: Yup.string()
-      .required("لطفا گذواژه خود را وارد کنید")
+      .required("لطفا گذرواژه خود را وارد کنید")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
         "حداقل یک حرف بزرگ و یک حرف کوچک لاتین و اعداد و کارکترهای خاص استفاده کنید"
       ),
   });
   const handleLogoutUser = () => {
-    axios
-      .get("http://authservice.azhadev.ir/api/auth/logout", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        swal("کاربر با موفقیت از سیستم خارج شد!", {
-          buttons: "متوجه شدم",
-          icon: "success",
-        });
+    Service.get("/logout", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
+      console.log(res);
+      swal("کاربر با موفقیت از سیستم خارج شد!", {
+        buttons: "متوجه شدم",
+        icon: "success",
       });
+    });
   };
   return (
     <div className="limiter">
@@ -66,7 +72,6 @@ const Login = () => {
               <div className="wrap-login100">
                 <Form className="login100-form validate-form pos-relative d-flex flex-column align-items-center justify-content-center">
                   <span className="login100-form-title">ورود اعضا</span>
-
                   <Control
                     formik={formik}
                     control="input"
@@ -84,13 +89,25 @@ const Login = () => {
                     label="رمز عبور"
                   />
                   <div className="container-login100-form-btn">
-                    <button className="login100-form-btn">ورود</button>
+                    <button
+                      type="submit"
+                      className="login100-form-btn"
+                      disabled={
+                        !(formik.dirty && formik.isValid) || formik.isSubmitting
+                      }
+                    >
+                      {formik.isSubmitting ? (
+                        <span className="visually-hidden">Loading...</span>
+                      ) : (
+                        "ورود"
+                      )}
+                    </button>
                   </div>
                   {localStorage.getItem("token") ? (
                     <div className="text-center p-t-12 p-b-45">
-                      <a className="txt2" href="#" onClick={handleLogoutUser}>
+                      <p className="txt2 pointer" onClick={handleLogoutUser}>
                         خروج از سیستم
-                      </a>
+                      </p>
                     </div>
                   ) : null}
                   <div className="text-center pos-absolute m-auto w-100 bottom-0">

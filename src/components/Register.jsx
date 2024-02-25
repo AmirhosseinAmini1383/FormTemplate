@@ -5,36 +5,39 @@ import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import swal from "sweetalert";
+import { Service } from "../Api/Axios/Service";
 const Register = () => {
   const initialValues = {
     phone: "",
     password: "",
     c_password: "",
   };
-  const onSubmit = (values) => {
+  const onSubmit = (values, submitProps) => {
+    setTimeout(() => {
+      submitProps.setSubmitting(false);
+      submitProps.resetForm();
+    }, 5000);
     console.log(values);
-    axios
-      .post("http://authservice.azhadev.ir/api/auth/register", values)
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem("token", res.data.token);
-        if (
-          res.status === 202 ||
-          res.status === 200 ||
-          res.statusText === "OK"
-        ) {
-          swal("ثبت نام با موفقیت انجام شد", {
-            buttons: "متوجه شدم",
-            icon: "success",
-          });
-        }
-        if (localStorage.getItem("token") === "undefined") {
-          swal("این شماره قبلا ثبت نام شده است", {
-            buttons: "متوجه شدم",
-            icon: "warning",
-          });
-        }
-      });
+    Service.post("/register", values).then((res) => {
+      console.log(res);
+      localStorage.setItem("token", res.data.token);
+      if (res.status === 200 || res.statusText === "OK") {
+        swal("ثبت نام با موفقیت انجام شد", {
+          buttons: "متوجه شدم",
+          icon: "success",
+        });
+      }
+      if (
+        localStorage.getItem("token") === "undefined" ||
+        res.status === 202 ||
+        res.statusText === "Accepted"
+      ) {
+        swal("این شماره قبلا ثبت نام شده است", {
+          buttons: "متوجه شدم",
+          icon: "warning",
+        });
+      }
+    });
   };
   const validationSchema = Yup.object({
     phone: Yup.number().required("لطفا شماره موبایل خود را کنید"),
@@ -49,19 +52,19 @@ const Register = () => {
       .required("لطفا گذواژه خود را تکرار کنید"),
   });
   const handleGetUserData = () => {
-    axios
-      .get("http://authservice.azhadev.ir/api/auth/user", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
+    Service.get("/user", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
+      console.log(res);
+      if (res.status === 200 || res.statusText === "OK") {
         swal("اطلاعات کاربر در قسمت Log مرورگر ارسال شد", {
           buttons: "متوجه شدم",
           icon: "success",
         });
-      });
+      }
+    });
   };
   return (
     <div className="limiter">
@@ -102,8 +105,18 @@ const Register = () => {
                     label="تایید رمز عبور"
                   />
                   <div className="container-login100-form-btn">
-                    <button className="login100-form-btn" type="submit">
-                      ثبت نام
+                    <button
+                      className="login100-form-btn"
+                      type="submit"
+                      disabled={
+                        !(formik.dirty && formik.isValid) || formik.isSubmitting
+                      }
+                    >
+                      {formik.isSubmitting ? (
+                        <span className="visually-hidden">Loading...</span>
+                      ) : (
+                        "ثبت نام"
+                      )}
                     </button>
                   </div>
                   <div className="text-center p-t-12 p-b-45">
