@@ -3,25 +3,56 @@ import React from "react";
 import * as Yup from "yup";
 import Control from "./formikElements/Control";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import swal from "sweetalert";
 const Login = () => {
   const initialValues = {
-    email: "",
+    phone: "",
     password: "",
   };
   const onSubmit = (values) => {
     console.log(values);
+    axios
+      .post("http://authservice.azhadev.ir/api/auth/login", values)
+      .then((res) => {
+        console.log(res);
+        localStorage.getItem("token");
+        if (
+          res.status === 202 ||
+          res.status === 200 ||
+          res.statusText === "OK"
+        ) {
+          swal("ورود با موفقیت انجام شد", {
+            buttons: "متوجه شدم",
+            icon: "success",
+          });
+        }
+      });
   };
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .required("لطفا ایمیل خود را وارد کنید")
-      .email("لطفا قالب ایمیل را رعایت کنید مثال : amir@gmail.com"),
+    phone: Yup.number().required("لطفا شماره موبایل خود را کنید"),
     password: Yup.string()
-      .required("لطفا گذرواژه خود را وارد کنید")
+      .required("لطفا گذواژه خود را وارد کنید")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-        "حد اقل یک حرف بزرگ و یک حرف کوچک لاتین و اعداد و کارکترهای خاص استفاده کنید"
+        "حداقل یک حرف بزرگ و یک حرف کوچک لاتین و اعداد و کارکترهای خاص استفاده کنید"
       ),
   });
+  const handleLogoutUser = () => {
+    axios
+      .get("http://authservice.azhadev.ir/api/auth/logout", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        swal("کاربر با موفقیت از سیستم خارج شد!", {
+          buttons: "متوجه شدم",
+          icon: "success",
+        });
+      });
+  };
   return (
     <div className="limiter">
       <div className="container-login100">
@@ -35,15 +66,15 @@ const Login = () => {
               <div className="wrap-login100">
                 <Form className="login100-form validate-form pos-relative d-flex flex-column align-items-center justify-content-center">
                   <span className="login100-form-title">ورود اعضا</span>
+
                   <Control
                     formik={formik}
                     control="input"
-                    type="email"
-                    name="email"
-                    icon="fa fa-envelope"
-                    label="ایمیل"
+                    type="text"
+                    name="phone"
+                    icon="fa fa-phone"
+                    label="شماره تلفن همراه"
                   />
-
                   <Control
                     formik={formik}
                     control="input"
@@ -55,11 +86,13 @@ const Login = () => {
                   <div className="container-login100-form-btn">
                     <button className="login100-form-btn">ورود</button>
                   </div>
-                  <div className="text-center p-t-12 p-b-45">
-                    <a className="txt2" href="#">
-                      فراموش کردید؟
-                    </a>
-                  </div>
+                  {localStorage.getItem("token") ? (
+                    <div className="text-center p-t-12 p-b-45">
+                      <a className="txt2" href="#" onClick={handleLogoutUser}>
+                        خروج از سیستم
+                      </a>
+                    </div>
+                  ) : null}
                   <div className="text-center pos-absolute m-auto w-100 bottom-0">
                     <Link className="txt2" to="/register">
                       ثبت نام
